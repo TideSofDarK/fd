@@ -15,6 +15,12 @@ public:
 	AFDPlayerController();
 
 protected:
+	class AFDCharacter* MyPawn;
+
+	bool bUpdateCamera;
+	bool bSprint;
+	float fCameraPitch;
+
 	/** */
 	FVector2D MovementInput;
 	FVector2D CameraInput;
@@ -27,6 +33,10 @@ protected:
 	/** */
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
+	void Sprint(float AxisValue);
+
+	void RotateCameraLeft();
+	void RotateCameraRight();
 };
 
 
