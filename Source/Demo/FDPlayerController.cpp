@@ -4,6 +4,8 @@
 #include "AI/Navigation/NavigationSystem.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "FDCharacter.h"
 
 AFDPlayerController::AFDPlayerController()
@@ -16,29 +18,49 @@ void AFDPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
+	if (!MyPawn)
+	{
+		MyPawn = Cast<AFDCharacter>(GetPawn());
+	}
+
+	USpringArmComponent* CameraBoom = MyPawn->GetCameraBoom();
+
+	FRotator R1 = CameraBoom->GetTargetRotation();
+	FRotator R2 = CameraBoom->GetTargetRotation();
+	R2.Yaw = fCameraPitch;
+	
+	if ((R1 - R2).IsNearlyZero(1.0f))
+	{
+		bUpdateCamera = false;
+	}
+
+	CameraBoom->SetRelativeRotation(FMath::Lerp(R1, R2, 0.15f));
 }
 
 void AFDPlayerController::SetupInputComponent()
 {
-	// set up gameplay key bindings
 	Super::SetupInputComponent();
+
+	bUpdateCamera = false;
+	fCameraPitch = -180.0f;
 
 	InputComponent->BindAxis("MoveForward", this, &AFDPlayerController::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &AFDPlayerController::MoveRight);
+	InputComponent->BindAxis("Sprint", this, &AFDPlayerController::Sprint);
+
+	InputComponent->BindAction("RotateCameraLeft", IE_Pressed, this, &AFDPlayerController::RotateCameraLeft);
+	InputComponent->BindAction("RotateCameraRight", IE_Pressed, this, &AFDPlayerController::RotateCameraRight);
 }
 
-//Input functions
 void AFDPlayerController::MoveForward(float Value)
 {
-	if ((Value != 0.0f))
+	if ((Value != 0.0f) && !bUpdateCamera)
 	{
-		AFDCharacter* MyPawn = Cast<AFDCharacter>(GetPawn());
+		USpringArmComponent* CameraBoom = MyPawn->GetCameraBoom();
 
-		// find out which way is forward
-		const FRotator Rotation = GetControlRotation();
+		const FRotator Rotation = CameraBoom->GetTargetRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		MyPawn->AddMovementInput(Direction, Value);
 	}
@@ -46,17 +68,36 @@ void AFDPlayerController::MoveForward(float Value)
 
 void AFDPlayerController::MoveRight(float Value)
 {
-	if ((Value != 0.0f))
+	if ((Value != 0.0f) && !bUpdateCamera)
 	{
-		AFDCharacter* MyPawn = Cast<AFDCharacter>(GetPawn());
+		USpringArmComponent* CameraBoom = MyPawn->GetCameraBoom();
 
-		// find out which way is right
-		const FRotator Rotation = GetControlRotation();
+		const FRotator Rotation = CameraBoom->GetTargetRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		// add movement in that direction
-		MyPawn->AddMovementInput(Direction, Value);
+		MyPawn->AddMovementInput(Direction, Value); 
 	}
+}
+
+void AFDPlayerController::Sprint(float Value)
+{
+	bSprint = FMath::CeilToFloat(Value) == 1.0f;
+
+	if (MyPawn)
+	{
+		MyPawn->GetCharacterMovement()->MaxWalkSpeed = bSprint ? 1000.0f : 600.0f;
+	}
+}
+
+void AFDPlayerController::RotateCameraLeft()
+{
+	fCameraPitch -= 90.0f;
+	bUpdateCamera = true;
+}
+
+void AFDPlayerController::RotateCameraRight()
+{
+	fCameraPitch += 90.0f;
+	bUpdateCamera = true;
 }
