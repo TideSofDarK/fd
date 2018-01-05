@@ -1,12 +1,14 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "FDPlayerController.h"
+#include "Components/CapsuleComponent.h"
 #include "AI/Navigation/NavigationSystem.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "FDCharacter.h"
+#include "FDPickableObject.h"
 
 AFDPlayerController::AFDPlayerController()
 {
@@ -17,11 +19,6 @@ AFDPlayerController::AFDPlayerController()
 void AFDPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-
-	if (!MyPawn)
-	{
-		MyPawn = Cast<AFDCharacter>(GetPawn());
-	}
 
 	USpringArmComponent* CameraBoom = MyPawn->GetCameraBoom();
 
@@ -48,8 +45,22 @@ void AFDPlayerController::SetupInputComponent()
 	InputComponent->BindAxis("MoveRight", this, &AFDPlayerController::MoveRight);
 	InputComponent->BindAxis("Sprint", this, &AFDPlayerController::Sprint);
 
+	InputComponent->BindAction("Pickup", IE_Pressed, this, &AFDPlayerController::Pickup);
+
 	InputComponent->BindAction("RotateCameraLeft", IE_Pressed, this, &AFDPlayerController::RotateCameraLeft);
 	InputComponent->BindAction("RotateCameraRight", IE_Pressed, this, &AFDPlayerController::RotateCameraRight);
+}
+
+void AFDPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	MyPawn = Cast<AFDCharacter>(GetPawn());
+	
+	UCapsuleComponent* CapsuleComponent = MyPawn->FindComponentByClass<UCapsuleComponent>();
+
+	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AFDPlayerController::BeginOverlap);
+	CapsuleComponent->OnComponentEndOverlap.AddDynamic(this, &AFDPlayerController::EndOverlap);
 }
 
 void AFDPlayerController::MoveForward(float Value)
@@ -90,6 +101,15 @@ void AFDPlayerController::Sprint(float Value)
 	}
 }
 
+void AFDPlayerController::Pickup()
+{
+	if (NearestPickableObject)
+	{
+		NearestPickableObject->Destroy();
+		UE_LOG(LogTemp, Warning, TEXT("BBB"));
+	}
+}
+
 void AFDPlayerController::RotateCameraLeft()
 {
 	fCameraPitch -= 90.0f;
@@ -100,4 +120,26 @@ void AFDPlayerController::RotateCameraRight()
 {
 	fCameraPitch += 90.0f;
 	bUpdateCamera = true;
+}
+
+void AFDPlayerController::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("BBB"));
+	UpdateNearestPickableObject();
+}
+
+void AFDPlayerController::EndOverlap(class UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	UE_LOG(LogTemp, Warning, TEXT("EEE"));
+	UpdateNearestPickableObject();
+}
+
+void AFDPlayerController::UpdateNearestPickableObject()
+{
+	TArray<AActor*> Actors;
+	MyPawn->GetOverlappingActors(Actors, TSubclassOf<AFDPickableObject>());
+
+	NearestPickableObject = Actors.Num() > 0 ? Cast<AFDPickableObject>(Actors.Last()) : nullptr;
+
+	OnUpdateNearestPickableObject.Broadcast(NearestPickableObject);
 }

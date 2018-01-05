@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Delegates/DelegateCombinations.h"
+#include "FDPickableObject.h"
 #include "FDPlayerController.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateNearestObjectDelegate, class AFDPickableObject*, OtherActor);
 
 UCLASS()
 class AFDPlayerController : public APlayerController
@@ -13,6 +17,20 @@ class AFDPlayerController : public APlayerController
 
 public:
 	AFDPlayerController();
+
+	// Returns nearest pickable object
+	// FORCEINLINE class FDPickableObject* GetNearestPickableObject() const { return NearestPickableObject; }
+
+	UFUNCTION()
+	void BeginOverlap(UPrimitiveComponent* OverlappedComponent,
+			AActor* OtherActor,
+			UPrimitiveComponent* OtherComp,
+			int32 OtherBodyIndex,
+			bool bFromSweep,
+			const FHitResult &SweepResult);
+
+	UFUNCTION()
+	void EndOverlap(class UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 protected:
 	class AFDCharacter* MyPawn;
@@ -25,18 +43,32 @@ protected:
 	FVector2D MovementInput;
 	FVector2D CameraInput;
 
+	/** Potentional pickup target */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Nearest Object", meta = (AllowPrivateAccess = "true"))
+	class AFDPickableObject* NearestPickableObject;
+
 	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 	// End PlayerController interface
+
+	virtual void BeginPlay() override;
 
 	/** */
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void Sprint(float AxisValue);
 
+	void Pickup();
+
 	void RotateCameraLeft();
 	void RotateCameraRight();
+
+	UFUNCTION(BlueprintCallable, Category = "Nearest Object")
+	void UpdateNearestPickableObject();
+
+	UPROPERTY(BlueprintAssignable, Category = "Nearest Object")
+	FUpdateNearestObjectDelegate OnUpdateNearestPickableObject;
 };
 
 

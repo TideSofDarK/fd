@@ -2,6 +2,6 @@
 
 #include "DemoGameModeBase.h"
 
-
-
-
+ADemoGameModeBase::ADemoGameModeBase() {
+	//HUDClass = FDHUD::StaticClass();
+}

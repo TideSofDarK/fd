@@ -14,7 +14,8 @@ class DEMO_API ADemoGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
-	
+public:
+	ADemoGameModeBase();
 	
 	
 };
