@@ -8,7 +8,7 @@
 #include "FDPickableObject.h"
 #include "FDPlayerController.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateNearestObjectDelegate, class AFDPickableObject*, OtherActor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUpdateNearestObjectDelegate, class AFDGameplayObject*, OtherActor);
 
 UCLASS()
 class AFDPlayerController : public APlayerController
@@ -43,9 +43,9 @@ protected:
 	FVector2D MovementInput;
 	FVector2D CameraInput;
 
-	/** Potentional pickup target */
+	/** Potentional interact target */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Nearest Object", meta = (AllowPrivateAccess = "true"))
-	class AFDPickableObject* NearestPickableObject;
+	class AFDGameplayObject* NearestInteractableObject;
 
 	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;
@@ -59,16 +59,16 @@ protected:
 	void MoveRight(float AxisValue);
 	void Sprint(float AxisValue);
 
-	void Pickup();
+	void Interact();
 
 	void RotateCameraLeft();
 	void RotateCameraRight();
 
 	UFUNCTION(BlueprintCallable, Category = "Nearest Object")
-	void UpdateNearestPickableObject();
+	void UpdateNearestInteractableObject();
 
 	UPROPERTY(BlueprintAssignable, Category = "Nearest Object")
-	FUpdateNearestObjectDelegate OnUpdateNearestPickableObject;
+	FUpdateNearestObjectDelegate OnUpdateNearestInteractableObject;
 };
 
 

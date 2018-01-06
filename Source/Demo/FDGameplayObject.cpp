@@ -20,6 +20,16 @@ AFDGameplayObject::AFDGameplayObject()
 	}
 }
 
+void AFDGameplayObject::SetHidden(bool Hidden)
+{
+	ECollisionEnabled::Type collision = Hidden ? ECollisionEnabled::NoCollision : ECollisionEnabled::QueryAndPhysics;
+
+	SetActorTickEnabled(!Hidden);
+
+	StaticMeshComponent->SetVisibility(!Hidden);
+	StaticMeshComponent->SetCollisionEnabled(collision);
+}
+
 // Called when the game starts or when spawned
 void AFDGameplayObject::BeginPlay()
 {
@@ -34,3 +44,7 @@ void AFDGameplayObject::Tick(float DeltaTime)
 
 }
 
+void AFDGameplayObject::Interact(AActor* OtherActor)
+{
+	OnInteract.Broadcast(OtherActor);
+}

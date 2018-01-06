@@ -6,6 +6,13 @@
 #include "FDGameplayObject.h"
 #include "FDPickableObject.generated.h"
 
+UENUM(BlueprintType)
+enum class EObjectSize : uint8
+{
+	VE_Small 	UMETA(DisplayName = "Small"),
+	VE_Large 	UMETA(DisplayName = "Large")
+};
+
 /**
  * 
  */
@@ -21,11 +28,23 @@ public:
 	/** GetBoxComponent **/
 	FORCEINLINE class UBoxComponent* GetBoxComponent() { return BoxComponent; }
 
+	/** SetHidden **/
+	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
+	virtual void SetHidden(bool Hidden) override;
+
+	/** Interact */
+	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
+	virtual void Interact(AActor* OtherActor) override;
+
 protected:
-	// Called when the game starts or when spawned
+	/** BeginPlay */
 	virtual void BeginPlay() override;
 
 	/** BoxComponent */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* BoxComponent;
+
+	/** ObjectSize */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Object")
+	EObjectSize ObjectSize;
 };

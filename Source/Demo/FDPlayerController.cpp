@@ -7,6 +7,7 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "FDInventoryComponent.h"
 #include "FDCharacter.h"
 #include "FDPickableObject.h"
 
@@ -45,7 +46,7 @@ void AFDPlayerController::SetupInputComponent()
 	InputComponent->BindAxis("MoveRight", this, &AFDPlayerController::MoveRight);
 	InputComponent->BindAxis("Sprint", this, &AFDPlayerController::Sprint);
 
-	InputComponent->BindAction("Pickup", IE_Pressed, this, &AFDPlayerController::Pickup);
+	InputComponent->BindAction("Interact", IE_Pressed, this, &AFDPlayerController::Interact);
 
 	InputComponent->BindAction("RotateCameraLeft", IE_Pressed, this, &AFDPlayerController::RotateCameraLeft);
 	InputComponent->BindAction("RotateCameraRight", IE_Pressed, this, &AFDPlayerController::RotateCameraRight);
@@ -101,12 +102,20 @@ void AFDPlayerController::Sprint(float Value)
 	}
 }
 
-void AFDPlayerController::Pickup()
+void AFDPlayerController::Interact()
 {
-	if (NearestPickableObject)
+	if (NearestInteractableObject)
 	{
-		NearestPickableObject->Destroy();
-		UE_LOG(LogTemp, Warning, TEXT("BBB"));
+		NearestInteractableObject->Interact(MyPawn);
+	}
+	else
+	{
+		UFDInventoryComponent* InventoryComponent = MyPawn->FindComponentByClass<UFDInventoryComponent>();
+		
+		AFDPickableObject* EjectedItem = InventoryComponent->EjectRandomItem();
+
+		EjectedItem->SetHidden(false);
+
 	}
 }
 
@@ -125,21 +134,21 @@ void AFDPlayerController::RotateCameraRight()
 void AFDPlayerController::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("BBB"));
-	UpdateNearestPickableObject();
+	UpdateNearestInteractableObject();
 }
 
 void AFDPlayerController::EndOverlap(class UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	UE_LOG(LogTemp, Warning, TEXT("EEE"));
-	UpdateNearestPickableObject();
+	UpdateNearestInteractableObject();
 }
 
-void AFDPlayerController::UpdateNearestPickableObject()
+void AFDPlayerController::UpdateNearestInteractableObject()
 {
 	TArray<AActor*> Actors;
-	MyPawn->GetOverlappingActors(Actors, TSubclassOf<AFDPickableObject>());
+	MyPawn->GetOverlappingActors(Actors, TSubclassOf<AFDGameplayObject>());
 
-	NearestPickableObject = Actors.Num() > 0 ? Cast<AFDPickableObject>(Actors.Last()) : nullptr;
+	NearestInteractableObject = Actors.Num() > 0 ? Cast<AFDGameplayObject>(Actors.Last()) : nullptr;
 
-	OnUpdateNearestPickableObject.Broadcast(NearestPickableObject);
+	OnUpdateNearestInteractableObject.Broadcast(NearestInteractableObject);
 }

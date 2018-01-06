@@ -14,6 +14,28 @@ UFDInventoryComponent::UFDInventoryComponent()
 }
 
 
+void UFDInventoryComponent::AddItem(AFDPickableObject * Item)
+{
+	Items.AddUnique(Item);
+	OnAddedItemToInventoryDelegate.Broadcast(Item);
+}
+
+AFDPickableObject* UFDInventoryComponent::EjectRandomItem()
+{
+	if (Items.Num() > 0)
+	{
+		AFDPickableObject* EjectedItem = Items.Last();
+		Items.Remove(EjectedItem);
+		OnRemovedItemFromInventoryDelegate.Broadcast(EjectedItem);
+
+		return EjectedItem;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
 // Called when the game starts
 void UFDInventoryComponent::BeginPlay()
 {
