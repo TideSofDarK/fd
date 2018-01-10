@@ -7,7 +7,7 @@
 #include "Delegates/DelegateCombinations.h"
 #include "FDGameplayObject.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractDelegate, class AActor*, OtherActor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractDelegate, class AActor*, OtherActor);
 
 UCLASS()
 class DEMO_API AFDGameplayObject : public AActor
@@ -24,6 +24,9 @@ public:
 	/** GetStaticMeshComponent **/
 	FORCEINLINE class UStaticMeshComponent* GetStaticMeshComponent() { return StaticMeshComponent; }
 
+	/** GetBoxComponent **/
+	FORCEINLINE class UBoxComponent* GetBoxComponent() { return BoxComponent; }
+
 	/** SetHidden **/
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
 	virtual void SetHidden(bool Hidden);
@@ -31,10 +34,6 @@ public:
 	/** Interact */
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
 	virtual void Interact(AActor* OtherActor);
-
-	/** CanInteractWith */
-	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
-	virtual bool CanInteractWith(AActor* OtherActor);
 
 protected:
 	// Called when the game starts or when spawned
@@ -48,11 +47,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* StaticMeshComponent;
 
+	/** BoxComponent */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* BoxComponent;
+
 	/** StaticMeshOverride */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UStaticMesh* StaticMeshOverride;
 
 	/** OnInteract */
 	UPROPERTY(BlueprintAssignable, Category = "Gameplay Object")
-	FInteractDelegate OnInteract;
+	FOnInteractDelegate OnInteractDelegate;
 };

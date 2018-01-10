@@ -10,6 +10,7 @@
 #include "FDInventoryComponent.h"
 #include "FDCharacter.h"
 #include "FDPickableObject.h"
+#include "FDStaticInteractableObject.h"
 
 AFDPlayerController::AFDPlayerController()
 {
@@ -109,10 +110,18 @@ void AFDPlayerController::Interact()
 
 	AFDPickableObject* ActiveInventoryItem = InventoryComponent->GetActiveItem();
 
+	AFDPickableObject* PickableObject = Cast<AFDPickableObject>(NearestInteractableObject);
+
 	if (NearestInteractableObject->IsValidLowLevelFast() && ActiveInventoryItem->IsValidLowLevelFast())
 	{
-		if (NearestInteractableObject->CanInteractWith(ActiveInventoryItem)) {
-			NearestInteractableObject->Interact(ActiveInventoryItem);
+		AFDStaticInteractableObject* StaticInteractableObject = Cast<AFDStaticInteractableObject>(NearestInteractableObject);
+
+		if (StaticInteractableObject->IsValidLowLevelFast())
+		{
+			if (StaticInteractableObject->CanInteractWith(ActiveInventoryItem))
+			{
+				StaticInteractableObject->InteractWithItem(ActiveInventoryItem);
+			}
 		}
 		else
 		{
@@ -125,7 +134,7 @@ void AFDPlayerController::Interact()
 	}
 	else if (ActiveInventoryItem->IsValidLowLevelFast())
 	{
-		ActiveInventoryItem->Use();
+		ActiveInventoryItem->Use(MyPawn);
 	}
 
 	//AFDPickableObject* EjectedItem = InventoryComponent->EjectRandomItem();

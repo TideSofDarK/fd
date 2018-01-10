@@ -34,9 +34,6 @@ int UFDInventoryComponent::LoopInventory()
 	}
 
 	OnLoopInvetoryDelegate.Broadcast(ActiveInventoryItemIndex);
-	
-	UE_LOG(LogTemp, Warning, TEXT("Num is %d"), Items.Num());
-	UE_LOG(LogTemp, Warning, TEXT("Index is %d"), ActiveInventoryItemIndex);
 
 	return ActiveInventoryItemIndex;
 }
@@ -48,6 +45,16 @@ void UFDInventoryComponent::AddItem(AFDPickableObject * Item)
 
 	if (ActiveInventoryItemIndex == -1) {
 		LoopInventory();
+	}
+}
+
+void UFDInventoryComponent::RemoveItem(AFDPickableObject * Item)
+{
+	Items.Remove(Item);
+	OnRemovedItemFromInventoryDelegate.Broadcast(Item);
+
+	if (!Items.Num()) {
+		ActiveInventoryItemIndex = -1;
 	}
 }
 

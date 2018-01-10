@@ -10,9 +10,6 @@ AFDPickableObject::AFDPickableObject()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
-	BoxComponent->SetupAttachment(RootComponent);
 }
 
 void AFDPickableObject::BeginPlay()
@@ -36,13 +33,25 @@ void AFDPickableObject::Interact(AActor* OtherActor)
 
 	UFDInventoryComponent* Inventory = OtherActor->FindComponentByClass<UFDInventoryComponent>();
 
-	if (Inventory) {
+	if (Inventory)
+	{
 		Inventory->AddItem(this);
 		SetHidden(true);
 	}
 }
 
-void AFDPickableObject::Use()
+void AFDPickableObject::Use(AActor* User)
 {
-	OnUsedDelegate.Broadcast();
+	OnUsedDelegate.Broadcast(User);
+
+	UFDInventoryComponent* Inventory = User->FindComponentByClass<UFDInventoryComponent>();
+
+	if (Inventory)
+	{
+		if (DestroyAfterUse)
+		{
+			Inventory->RemoveItem(this);
+			Destroy();
+		}
+	}
 }

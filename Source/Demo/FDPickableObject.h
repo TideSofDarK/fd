@@ -13,7 +13,7 @@ enum class EObjectSize : uint8
 	VE_Large 	UMETA(DisplayName = "Large")
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUsedDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUsedDelegate, class AActor*, User);
 
 /**
  * 
@@ -27,9 +27,6 @@ public:
 	// Sets default values for this actor's properties
 	AFDPickableObject();
 
-	/** GetBoxComponent **/
-	FORCEINLINE class UBoxComponent* GetBoxComponent() { return BoxComponent; }
-
 	/** SetHidden **/
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
 	virtual void SetHidden(bool Hidden) override;
@@ -40,19 +37,19 @@ public:
 
 	/** Use */
 	UFUNCTION(BlueprintCallable, Category = "Pickable Object")
-	virtual void Use();
+	virtual void Use(AActor* User);
 
 protected:
 	/** BeginPlay */
 	virtual void BeginPlay() override;
 
-	/** BoxComponent */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	class UBoxComponent* BoxComponent;
-
 	/** ObjectSize */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickable Object")
 	EObjectSize ObjectSize;
+
+	/** DestroyAfterUse */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickable Object")
+	bool DestroyAfterUse;
 
 	/** OnUsedDelegate **/
 	UPROPERTY(BlueprintAssignable, Category = "Pickable Object")

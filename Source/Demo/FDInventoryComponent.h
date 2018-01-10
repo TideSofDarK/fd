@@ -29,6 +29,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void AddItem(AFDPickableObject* Item);
 
+	/** RemoveItem **/
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void RemoveItem(AFDPickableObject* Item);
+
 	/** EjectRandomItem **/
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	AFDPickableObject* EjectRandomItem();
