@@ -47,6 +47,7 @@ void AFDPlayerController::SetupInputComponent()
 	InputComponent->BindAxis("Sprint", this, &AFDPlayerController::Sprint);
 
 	InputComponent->BindAction("Interact", IE_Pressed, this, &AFDPlayerController::Interact);
+	InputComponent->BindAction("LoopInventory", IE_Pressed, this, &AFDPlayerController::LoopInventory);
 
 	InputComponent->BindAction("RotateCameraLeft", IE_Pressed, this, &AFDPlayerController::RotateCameraLeft);
 	InputComponent->BindAction("RotateCameraRight", IE_Pressed, this, &AFDPlayerController::RotateCameraRight);
@@ -104,19 +105,37 @@ void AFDPlayerController::Sprint(float Value)
 
 void AFDPlayerController::Interact()
 {
-	if (NearestInteractableObject)
+	UFDInventoryComponent* InventoryComponent = MyPawn->FindComponentByClass<UFDInventoryComponent>();
+
+	AFDPickableObject* ActiveInventoryItem = InventoryComponent->GetActiveItem();
+
+	if (NearestInteractableObject->IsValidLowLevelFast() && ActiveInventoryItem->IsValidLowLevelFast())
+	{
+		if (NearestInteractableObject->CanInteractWith(ActiveInventoryItem)) {
+			NearestInteractableObject->Interact(ActiveInventoryItem);
+		}
+		else
+		{
+			NearestInteractableObject->Interact(MyPawn);
+		}
+	}
+	else if (NearestInteractableObject->IsValidLowLevelFast())
 	{
 		NearestInteractableObject->Interact(MyPawn);
 	}
-	else
+	else if (ActiveInventoryItem->IsValidLowLevelFast())
 	{
-		UFDInventoryComponent* InventoryComponent = MyPawn->FindComponentByClass<UFDInventoryComponent>();
-		
-		AFDPickableObject* EjectedItem = InventoryComponent->EjectRandomItem();
-
-		EjectedItem->SetHidden(false);
-
+		ActiveInventoryItem->Use();
 	}
+
+	//AFDPickableObject* EjectedItem = InventoryComponent->EjectRandomItem();
+	//EjectedItem->SetHidden(false);
+}
+
+void AFDPlayerController::LoopInventory()
+{
+	UFDInventoryComponent* InventoryComponent = MyPawn->FindComponentByClass<UFDInventoryComponent>();
+	InventoryComponent->LoopInventory();
 }
 
 void AFDPlayerController::RotateCameraLeft()
@@ -133,13 +152,11 @@ void AFDPlayerController::RotateCameraRight()
 
 void AFDPlayerController::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("BBB"));
 	UpdateNearestInteractableObject();
 }
 
 void AFDPlayerController::EndOverlap(class UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("EEE"));
 	UpdateNearestInteractableObject();
 }
 

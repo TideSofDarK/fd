@@ -13,6 +13,8 @@ enum class EObjectSize : uint8
 	VE_Large 	UMETA(DisplayName = "Large")
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUsedDelegate);
+
 /**
  * 
  */
@@ -36,6 +38,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
 	virtual void Interact(AActor* OtherActor) override;
 
+	/** Use */
+	UFUNCTION(BlueprintCallable, Category = "Pickable Object")
+	virtual void Use();
+
 protected:
 	/** BeginPlay */
 	virtual void BeginPlay() override;
@@ -45,6 +51,10 @@ protected:
 	class UBoxComponent* BoxComponent;
 
 	/** ObjectSize */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Object")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickable Object")
 	EObjectSize ObjectSize;
+
+	/** OnUsedDelegate **/
+	UPROPERTY(BlueprintAssignable, Category = "Pickable Object")
+	FOnUsedDelegate OnUsedDelegate;
 };

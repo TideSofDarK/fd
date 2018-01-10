@@ -35,11 +35,11 @@ public:
 protected:
 	class AFDCharacter* MyPawn;
 
+	/** Movement and Camera */
 	bool bUpdateCamera;
 	bool bSprint;
 	float fCameraPitch;
 
-	/** */
 	FVector2D MovementInput;
 	FVector2D CameraInput;
 
@@ -54,18 +54,21 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	/** */
+	/** Controls */
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void Sprint(float AxisValue);
 
 	void Interact();
+	void LoopInventory();
 
 	void RotateCameraLeft();
 	void RotateCameraRight();
 
 	UFUNCTION(BlueprintCallable, Category = "Nearest Object")
 	void UpdateNearestInteractableObject();
+
+	/** Delegates */
 
 	UPROPERTY(BlueprintAssignable, Category = "Nearest Object")
 	FUpdateNearestObjectDelegate OnUpdateNearestInteractableObject;

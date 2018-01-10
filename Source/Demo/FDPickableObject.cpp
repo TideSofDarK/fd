@@ -41,3 +41,8 @@ void AFDPickableObject::Interact(AActor* OtherActor)
 		SetHidden(true);
 	}
 }
+
+void AFDPickableObject::Use()
+{
+	OnUsedDelegate.Broadcast();
+}

@@ -32,6 +32,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
 	virtual void Interact(AActor* OtherActor);
 
+	/** CanInteractWith */
+	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
+	virtual bool CanInteractWith(AActor* OtherActor);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

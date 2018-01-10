@@ -48,3 +48,8 @@ void AFDGameplayObject::Interact(AActor* OtherActor)
 {
 	OnInteract.Broadcast(OtherActor);
 }
+
+bool AFDGameplayObject::CanInteractWith(AActor * OtherActor)
+{
+	return false;
+}
