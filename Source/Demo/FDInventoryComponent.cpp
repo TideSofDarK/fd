@@ -15,7 +15,13 @@ UFDInventoryComponent::UFDInventoryComponent()
 
 int UFDInventoryComponent::LoopInventory()
 {
-	if (ActiveInventoryItemIndex == -1) {
+	if (Items.Num() < ActiveInventoryItemIndex - 1)
+	{
+		ActiveInventoryItemIndex = -1;
+	}
+
+	if (ActiveInventoryItemIndex == -1)
+	{
 		if (Items.Num() > 0)
 		{
 			ActiveInventoryItemIndex = 0;
@@ -43,7 +49,8 @@ void UFDInventoryComponent::AddItem(AFDPickableObject * Item)
 	int Index = Items.AddUnique(Item);
 	OnAddedItemToInventoryDelegate.Broadcast(Item);
 
-	if (ActiveInventoryItemIndex == -1) {
+	if (ActiveInventoryItemIndex == -1)
+	{
 		LoopInventory();
 	}
 }
@@ -53,8 +60,13 @@ void UFDInventoryComponent::RemoveItem(AFDPickableObject * Item)
 	Items.Remove(Item);
 	OnRemovedItemFromInventoryDelegate.Broadcast(Item);
 
-	if (!Items.Num()) {
+	if (!Items.Num())
+	{
 		ActiveInventoryItemIndex = -1;
+	}
+	else
+	{
+		LoopInventory();
 	}
 }
 

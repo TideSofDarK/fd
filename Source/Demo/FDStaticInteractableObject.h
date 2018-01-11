@@ -26,8 +26,8 @@ public:
 	virtual void InteractWithItem(AFDPickableObject* Item);
 
 	/** CanInteractWith */
-	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
-	virtual bool CanInteractWith(AFDPickableObject* Item);
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Gameplay Object")
+	bool CanInteractWith(AFDPickableObject* Item);
 	
 protected:
 	/** BeginPlay */

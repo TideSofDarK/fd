@@ -21,7 +21,7 @@ void AFDStaticInteractableObject::InteractWithItem(AFDPickableObject* Item)
 	OnInteractWithItemDelegate.Broadcast(Item);
 }
 
-bool AFDStaticInteractableObject::CanInteractWith(AFDPickableObject* Item)
-{
-	return false;
-}
+//bool AFDStaticInteractableObject::CanInteractWith(AFDPickableObject* Item)
+//{
+//	return false;
+//}
