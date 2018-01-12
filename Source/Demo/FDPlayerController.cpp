@@ -41,7 +41,7 @@ void AFDPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	bUpdateCamera = false;
-	fCameraPitch = -180.0f;
+	fCameraPitch = 0.0f;
 
 	InputComponent->BindAxis("MoveForward", this, &AFDPlayerController::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &AFDPlayerController::MoveRight);
@@ -64,6 +64,9 @@ void AFDPlayerController::BeginPlay()
 
 	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &AFDPlayerController::BeginOverlap);
 	CapsuleComponent->OnComponentEndOverlap.AddDynamic(this, &AFDPlayerController::EndOverlap);
+
+	fCameraPitch = FMath::RoundToFloat(MyPawn->GetActorRotation().Euler().Z / 90.0f) * 90.0f;
+	SetCameraPitch(fCameraPitch);
 }
 
 void AFDPlayerController::MoveForward(float Value)
@@ -120,7 +123,7 @@ void AFDPlayerController::Interact()
 		{
 			if (StaticInteractableObject->CanInteractWith(ActiveInventoryItem))
 			{
-				StaticInteractableObject->InteractWithItem(ActiveInventoryItem);
+				StaticInteractableObject->InteractWithItem(ActiveInventoryItem, MyPawn);
 			}
 		}
 		else
@@ -145,6 +148,16 @@ void AFDPlayerController::LoopInventory()
 {
 	UFDInventoryComponent* InventoryComponent = MyPawn->FindComponentByClass<UFDInventoryComponent>();
 	InventoryComponent->LoopInventory();
+}
+
+void AFDPlayerController::SetCameraPitch(float Pitch)
+{
+	USpringArmComponent* CameraBoom = MyPawn->GetCameraBoom();
+
+	FRotator NewRotation = CameraBoom->GetTargetRotation();
+	NewRotation.Yaw = Pitch;
+
+	CameraBoom->SetRelativeRotation(NewRotation);
 }
 
 void AFDPlayerController::RotateCameraLeft()

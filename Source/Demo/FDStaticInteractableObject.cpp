@@ -16,9 +16,9 @@ void AFDStaticInteractableObject::Tick(float DeltaTime)
 
 }
 
-void AFDStaticInteractableObject::InteractWithItem(AFDPickableObject* Item)
+void AFDStaticInteractableObject::InteractWithItem(AFDPickableObject* Item, AFDCharacter* OtherActor)
 {
-	OnInteractWithItemDelegate.Broadcast(Item);
+	OnInteractWithItemDelegate.Broadcast(Item, OtherActor);
 }
 
 //bool AFDStaticInteractableObject::CanInteractWith(AFDPickableObject* Item)

@@ -62,6 +62,7 @@ protected:
 	void Interact();
 	void LoopInventory();
 
+	void SetCameraPitch(float Pitch);
 	void RotateCameraLeft();
 	void RotateCameraRight();
 

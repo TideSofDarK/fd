@@ -7,7 +7,7 @@
 #include "FDGameplayObject.h"
 #include "FDStaticInteractableObject.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractWithItemDelegate, class AFDPickableObject*, Item);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInteractWithItemDelegate, class AFDPickableObject*, Item, class AFDCharacter*, OtherActor);
 
 /**
  * 
@@ -23,7 +23,7 @@ public:
 
 	/** InteractWithItem */
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
-	virtual void InteractWithItem(AFDPickableObject* Item);
+	virtual void InteractWithItem(AFDPickableObject* Item, AFDCharacter* OtherActor);
 
 	/** CanInteractWith */
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Gameplay Object")
