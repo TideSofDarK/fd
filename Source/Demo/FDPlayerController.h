@@ -33,7 +33,7 @@ public:
 	void EndOverlap(class UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 protected:
-	class AFDCharacter* MyPawn;
+	class AFDPlayerCharacter* MyPawn;
 
 	/** Movement and Camera */
 	bool bUpdateCamera;

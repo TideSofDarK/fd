@@ -8,7 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "FDInventoryComponent.h"
-#include "FDCharacter.h"
+#include "FDPlayerCharacter.h"
 #include "FDPickableObject.h"
 #include "FDStaticInteractableObject.h"
 
@@ -58,7 +58,7 @@ void AFDPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MyPawn = Cast<AFDCharacter>(GetPawn());
+	MyPawn = Cast<AFDPlayerCharacter>(GetPawn());
 	
 	UCapsuleComponent* CapsuleComponent = MyPawn->FindComponentByClass<UCapsuleComponent>();
 
