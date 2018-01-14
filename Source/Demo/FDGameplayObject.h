@@ -35,6 +35,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
 	virtual void Interact(AActor* OtherActor);
 
+	/** GetBypassNearestObjectDetection */
+	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
+	bool GetBypassNearestObjectDetection();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -54,6 +58,10 @@ protected:
 	/** StaticMeshOverride */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UStaticMesh* StaticMeshOverride;
+
+	/** BypassNearestObjectDetection */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool BypassNearestObjectDetection;
 
 	/** OnInteract */
 	UPROPERTY(BlueprintAssignable, Category = "Gameplay Object")

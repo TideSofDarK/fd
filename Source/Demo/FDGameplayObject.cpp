@@ -22,6 +22,8 @@ AFDGameplayObject::AFDGameplayObject()
 	if (StaticMeshOverride) {
 		StaticMeshComponent->SetStaticMesh(StaticMeshOverride);
 	}
+
+	BypassNearestObjectDetection = false;
 }
 
 void AFDGameplayObject::SetHidden(bool Hidden)
@@ -51,4 +53,9 @@ void AFDGameplayObject::Tick(float DeltaTime)
 void AFDGameplayObject::Interact(AActor* OtherActor)
 {
 	OnInteractDelegate.Broadcast(OtherActor);
+}
+
+bool AFDGameplayObject::GetBypassNearestObjectDetection()
+{
+	return BypassNearestObjectDetection;
 }

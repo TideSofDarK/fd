@@ -187,7 +187,17 @@ void AFDPlayerController::UpdateNearestInteractableObject()
 	TArray<AActor*> Actors;
 	MyPawn->GetOverlappingActors(Actors, TSubclassOf<AFDGameplayObject>());
 
-	NearestInteractableObject = Actors.Num() > 0 ? Cast<AFDGameplayObject>(Actors.Last()) : nullptr;
+	for (int32 Index = Actors.Num() - 1; Index != -1; --Index)
+	{
+		AFDGameplayObject* Actor = Cast<AFDGameplayObject>(Actors[Index]);
+		if (!Actor->GetBypassNearestObjectDetection())
+		{
+			NearestInteractableObject = Actor;
+			OnUpdateNearestInteractableObject.Broadcast(NearestInteractableObject);
+			return;
+		}
+	}
 
-	OnUpdateNearestInteractableObject.Broadcast(NearestInteractableObject);
+	NearestInteractableObject = nullptr;
+	OnUpdateNearestInteractableObject.Broadcast(nullptr);
 }
