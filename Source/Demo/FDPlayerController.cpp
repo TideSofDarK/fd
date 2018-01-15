@@ -46,6 +46,7 @@ void AFDPlayerController::SetupInputComponent()
 	InputComponent->BindAxis("MoveForward", this, &AFDPlayerController::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &AFDPlayerController::MoveRight);
 	InputComponent->BindAxis("Sprint", this, &AFDPlayerController::Sprint);
+	InputComponent->BindAxis("Strafe", this, &AFDPlayerController::Strafe);
 
 	InputComponent->BindAction("Interact", IE_Pressed, this, &AFDPlayerController::Interact);
 	InputComponent->BindAction("LoopInventory", IE_Pressed, this, &AFDPlayerController::LoopInventory);
@@ -104,6 +105,16 @@ void AFDPlayerController::Sprint(float Value)
 	if (MyPawn)
 	{
 		MyPawn->GetCharacterMovement()->MaxWalkSpeed = bSprint ? 1000.0f : 600.0f;
+	}
+}
+
+void AFDPlayerController::Strafe(float Value)
+{
+	bStrafe = FMath::CeilToFloat(Value) == 1.0f;
+
+	if (MyPawn)
+	{
+		MyPawn->GetCharacterMovement()->bOrientRotationToMovement = bStrafe;
 	}
 }
 
@@ -190,7 +201,7 @@ void AFDPlayerController::UpdateNearestInteractableObject()
 	for (int32 Index = Actors.Num() - 1; Index != -1; --Index)
 	{
 		AFDGameplayObject* Actor = Cast<AFDGameplayObject>(Actors[Index]);
-		if (!Actor->GetBypassNearestObjectDetection())
+		if (Actor->IsValidLowLevelFast() && !Actor->GetBypassNearestObjectDetection())
 		{
 			NearestInteractableObject = Actor;
 			OnUpdateNearestInteractableObject.Broadcast(NearestInteractableObject);

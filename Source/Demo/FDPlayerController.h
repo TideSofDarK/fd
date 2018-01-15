@@ -38,6 +38,7 @@ protected:
 	/** Movement and Camera */
 	bool bUpdateCamera;
 	bool bSprint;
+	bool bStrafe;
 	float fCameraPitch;
 
 	FVector2D MovementInput;
@@ -58,6 +59,7 @@ protected:
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void Sprint(float AxisValue);
+	void Strafe(float AxisValue);
 
 	void Interact();
 	void LoopInventory();

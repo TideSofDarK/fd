@@ -1,0 +1,46 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundCue.h"
+#include "FDPickableObject.h"
+#include "FDFirearm.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class DEMO_API AFDFirearm : public AFDPickableObject
+{
+	GENERATED_BODY()
+
+public:
+	/** Use */
+	UFUNCTION(BlueprintCallable, Category = Firearm)
+	virtual void Use(AActor* User) override;
+	
+protected:
+	AFDFirearm();
+
+	/** MagazineCapacity */
+	UPROPERTY(EditDefaultsOnly, Category = Firearm)
+	int MagazineCapacity;
+
+	/** Damage */
+	UPROPERTY(EditDefaultsOnly, Category = Firearm)
+	int Damage;
+
+	/** ShotSound */
+	UPROPERTY(EditDefaultsOnly, Category = Firearm)
+	USoundCue* ShotSound;
+
+	/** AudioComponent */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	class UAudioComponent* AudioComponent;
+	
+	/** Fire */
+	UFUNCTION(BlueprintCallable, Category = Firearm)
+	void Fire();
+};

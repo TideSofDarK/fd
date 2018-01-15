@@ -36,7 +36,7 @@ public:
 	virtual void Interact(AActor* OtherActor);
 
 	/** GetBypassNearestObjectDetection */
-	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
+	UFUNCTION(BlueprintPure, Category = "Gameplay Object")
 	bool GetBypassNearestObjectDetection();
 
 protected:
@@ -60,7 +60,7 @@ protected:
 	class UStaticMesh* StaticMeshOverride;
 
 	/** BypassNearestObjectDetection */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	bool BypassNearestObjectDetection;
 
 	/** OnInteract */

@@ -37,6 +37,11 @@ void AFDPickableObject::Interact(AActor* OtherActor)
 	{
 		Inventory->AddItem(this);
 		SetHidden(true);
+
+		if (OtherActor->IsA<AFDCharacter>())
+		{
+			SetHolder(Cast<AFDCharacter>(OtherActor));
+		}
 	}
 }
 
@@ -54,4 +59,14 @@ void AFDPickableObject::Use(AActor* User)
 			Destroy();
 		}
 	}
+}
+
+AFDCharacter* AFDPickableObject::GetHolder()
+{
+	return Holder;
+}
+
+void AFDPickableObject::SetHolder(AFDCharacter* NewHolder)
+{
+	Holder = NewHolder;
 }

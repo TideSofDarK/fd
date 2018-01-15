@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FDCharacter.h"
 #include "FDGameplayObject.h"
 #include "FDPickableObject.generated.h"
 
@@ -23,6 +24,10 @@ class DEMO_API AFDPickableObject : public AFDGameplayObject
 {
 	GENERATED_BODY()
 
+private:
+	/** Holder */
+	AFDCharacter* Holder;
+
 public:
 	// Sets default values for this actor's properties
 	AFDPickableObject();
@@ -38,6 +43,14 @@ public:
 	/** Use */
 	UFUNCTION(BlueprintCallable, Category = "Pickable Object")
 	virtual void Use(AActor* User);
+
+	/** GetHolder */
+	UFUNCTION(BlueprintPure, Category = "Pickable Object")
+	AFDCharacter* GetHolder();
+
+	/** SetHolder */
+	UFUNCTION(BlueprintCallable, Category = "Pickable Object")
+	void SetHolder(AFDCharacter* NewOwner);
 
 protected:
 	/** BeginPlay */
