@@ -21,6 +21,7 @@ public:
 	// Returns nearest pickable object
 	// FORCEINLINE class FDPickableObject* GetNearestPickableObject() const { return NearestPickableObject; }
 
+	/** BeginOverlap */
 	UFUNCTION()
 	void BeginOverlap(UPrimitiveComponent* OverlappedComponent,
 			AActor* OtherActor,
@@ -29,8 +30,13 @@ public:
 			bool bFromSweep,
 			const FHitResult &SweepResult);
 
+	/** EndOverlap */
 	UFUNCTION()
 	void EndOverlap(class UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	/** IsStrafing */
+	UFUNCTION(BlueprintPure)
+	bool IsStrafing();
 
 protected:
 	class AFDPlayerCharacter* MyPawn;

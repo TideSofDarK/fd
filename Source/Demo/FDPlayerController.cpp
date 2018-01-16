@@ -114,7 +114,8 @@ void AFDPlayerController::Strafe(float Value)
 
 	if (MyPawn)
 	{
-		MyPawn->GetCharacterMovement()->bOrientRotationToMovement = bStrafe;
+		MyPawn->GetCharacterMovement()->bOrientRotationToMovement = !bStrafe;
+		MyPawn->GetCharacterMovement()->MaxWalkSpeed = bStrafe ? 375.0f : 600.0f;
 	}
 }
 
@@ -191,6 +192,11 @@ void AFDPlayerController::BeginOverlap(UPrimitiveComponent* OverlappedComponent,
 void AFDPlayerController::EndOverlap(class UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	UpdateNearestInteractableObject();
+}
+
+bool AFDPlayerController::IsStrafing()
+{
+	return bStrafe;
 }
 
 void AFDPlayerController::UpdateNearestInteractableObject()
