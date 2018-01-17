@@ -52,17 +52,33 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Pickable Object")
 	void SetHolder(AFDCharacter* NewOwner);
 
+	/** GetAttachWhenActive */
+	UFUNCTION(BlueprintPure, Category = "Pickable Object")
+	bool GetAttachWhenActive();
+
+	/** GetSocketName */
+	UFUNCTION(BlueprintPure, Category = "Pickable Object")
+	FName GetSocketName();
+
 protected:
 	/** BeginPlay */
 	virtual void BeginPlay() override;
 
 	/** ObjectSize */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickable Object")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pickable Object")
 	EObjectSize ObjectSize;
 
 	/** DestroyAfterUse */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickable Object")
 	bool DestroyAfterUse;
+
+	/** AttachWhenActive */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pickable Object")
+	bool AttachWhenActive;
+
+	/** SocketName */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pickable Object")
+	FName SocketName;
 
 	/** OnUsedDelegate **/
 	UPROPERTY(BlueprintAssignable, Category = "Pickable Object")

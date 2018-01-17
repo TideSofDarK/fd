@@ -8,6 +8,8 @@
 #include "FDPickableObject.h"
 #include "FDFirearm.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFired, FHitResult, HitResult);
+
 /**
  * 
  */
@@ -32,10 +34,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Firearm)
 	int Damage;
 
-	/** ShotSound */
-	UPROPERTY(EditDefaultsOnly, Category = Firearm)
-	USoundCue* ShotSound;
-
 	/** AudioComponent */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UAudioComponent* AudioComponent;
@@ -43,4 +41,8 @@ protected:
 	/** Fire */
 	UFUNCTION(BlueprintCallable, Category = Firearm)
 	void Fire();
+
+	/** OnFired */
+	UPROPERTY(BlueprintAssignable, Category = Firearm)
+	FOnFired OnFired;
 };

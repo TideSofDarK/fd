@@ -15,6 +15,12 @@ UFDInventoryComponent::UFDInventoryComponent()
 
 int UFDInventoryComponent::LoopInventory()
 {
+	// Hide previously attached item
+	if (Items.IsValidIndex(ActiveInventoryItemIndex) && Items[ActiveInventoryItemIndex]->GetAttachWhenActive())
+	{
+		Items[ActiveInventoryItemIndex]->SetHidden(true);
+	}
+
 	if (Items.Num() < ActiveInventoryItemIndex - 1)
 	{
 		ActiveInventoryItemIndex = -1;
@@ -37,6 +43,13 @@ int UFDInventoryComponent::LoopInventory()
 	if (ActiveInventoryItemIndex >= Items.Num())
 	{
 		ActiveInventoryItemIndex = 0;
+	}
+
+	// Attach and show if need
+	if (Items[ActiveInventoryItemIndex]->GetAttachWhenActive())
+	{
+		Items[ActiveInventoryItemIndex]->SetHidden(false);
+		Items[ActiveInventoryItemIndex]->AttachToComponent(GetOwner()->FindComponentByClass<USceneComponent>(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Items[ActiveInventoryItemIndex]->GetSocketName());
 	}
 
 	OnLoopInvetoryDelegate.Broadcast(ActiveInventoryItemIndex);

@@ -35,13 +35,15 @@ void AFDPickableObject::Interact(AActor* OtherActor)
 
 	if (Inventory)
 	{
-		Inventory->AddItem(this);
+		BypassNearestObjectDetection = true;
 		SetHidden(true);
 
 		if (OtherActor->IsA<AFDCharacter>())
 		{
 			SetHolder(Cast<AFDCharacter>(OtherActor));
 		}
+
+		Inventory->AddItem(this);
 	}
 }
 
@@ -69,4 +71,14 @@ AFDCharacter* AFDPickableObject::GetHolder()
 void AFDPickableObject::SetHolder(AFDCharacter* NewHolder)
 {
 	Holder = NewHolder;
+}
+
+bool AFDPickableObject::GetAttachWhenActive()
+{
+	return AttachWhenActive;
+}
+
+FName AFDPickableObject::GetSocketName()
+{
+	return SocketName;
 }

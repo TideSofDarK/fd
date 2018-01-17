@@ -41,6 +41,8 @@ void AFDPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	bUpdateCamera = false;
+	bSprint = false;
+	bStrafe = false;
 	fCameraPitch = 0.0f;
 
 	InputComponent->BindAxis("MoveForward", this, &AFDPlayerController::MoveForward);
@@ -112,7 +114,7 @@ void AFDPlayerController::Strafe(float Value)
 {
 	bStrafe = FMath::CeilToFloat(Value) == 1.0f;
 
-	if (MyPawn)
+	if (MyPawn && !bSprint)
 	{
 		MyPawn->GetCharacterMovement()->bOrientRotationToMovement = !bStrafe;
 		MyPawn->GetCharacterMovement()->MaxWalkSpeed = bStrafe ? 375.0f : 600.0f;
@@ -127,33 +129,36 @@ void AFDPlayerController::Interact()
 
 	AFDPickableObject* PickableObject = Cast<AFDPickableObject>(NearestInteractableObject);
 
-	if (NearestInteractableObject->IsValidLowLevelFast() && ActiveInventoryItem->IsValidLowLevelFast())
+	bool ValidNearestInteractableObject = NearestInteractableObject != nullptr && NearestInteractableObject->IsValidLowLevelFast();
+	bool ValidActiveInventoryItem		= ActiveInventoryItem != nullptr && ActiveInventoryItem->IsValidLowLevelFast();
+
+	if (ValidNearestInteractableObject && ValidActiveInventoryItem)
 	{
 		AFDStaticInteractableObject* StaticInteractableObject = Cast<AFDStaticInteractableObject>(NearestInteractableObject);
 
-		if (StaticInteractableObject->IsValidLowLevelFast())
+		// Use item on some object
+		if (StaticInteractableObject != nullptr && StaticInteractableObject->IsValidLowLevel())
 		{
 			if (StaticInteractableObject->CanInteractWith(ActiveInventoryItem))
 			{
 				StaticInteractableObject->InteractWithItem(ActiveInventoryItem, MyPawn);
 			}
 		}
-		else
+		else // Rollback to generic interact if item can't be used 
 		{
 			NearestInteractableObject->Interact(MyPawn);
 		}
 	}
-	else if (NearestInteractableObject->IsValidLowLevelFast())
+	else if (ValidNearestInteractableObject)
 	{
 		NearestInteractableObject->Interact(MyPawn);
 	}
-	else if (ActiveInventoryItem->IsValidLowLevelFast())
+	else if (ValidActiveInventoryItem)
 	{
 		ActiveInventoryItem->Use(MyPawn);
 	}
 
-	//AFDPickableObject* EjectedItem = InventoryComponent->EjectRandomItem();
-	//EjectedItem->SetHidden(false);
+	UpdateNearestInteractableObject();
 }
 
 void AFDPlayerController::LoopInventory()
@@ -201,8 +206,10 @@ bool AFDPlayerController::IsStrafing()
 
 void AFDPlayerController::UpdateNearestInteractableObject()
 {
+	UCapsuleComponent* CapsuleComponent = MyPawn->FindComponentByClass<UCapsuleComponent>();
+
 	TArray<AActor*> Actors;
-	MyPawn->GetOverlappingActors(Actors, TSubclassOf<AFDGameplayObject>());
+	CapsuleComponent->GetOverlappingActors(Actors, TSubclassOf<AFDGameplayObject>());
 
 	for (int32 Index = Actors.Num() - 1; Index != -1; --Index)
 	{

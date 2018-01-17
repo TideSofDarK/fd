@@ -9,9 +9,8 @@ AFDFirearm::AFDFirearm()
 	AudioComponent->SetupAttachment(RootComponent);
 	AudioComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 
-	if (ShotSound->IsValidLowLevelFast()) {
-		AudioComponent->SetSound(ShotSound);
-	}
+	MagazineCapacity = 10;
+	Damage = 10;
 }
 
 void AFDFirearm::Fire()
@@ -26,13 +25,18 @@ void AFDFirearm::Fire()
 
 	FHitResult RV_Hit(ForceInit);
 
-	GetWorld()->LineTraceSingleByChannel(RV_Hit, GetActorLocation(), GetActorLocation() + (GetActorForwardVector() * 1000), ECC_Pawn, RV_TraceParams);
+	// Apply recoil
+	FVector Direction = GetHolder()->GetActorForwardVector() + FVector(FMath::RandRange(-0.025f, 0.025f), FMath::RandRange(-0.025f, 0.025f), FMath::RandRange(-0.025f, 0.025f));
 
+	GetWorld()->LineTraceSingleByChannel(RV_Hit, GetActorLocation(), GetActorLocation() + (Direction * 2000), ECC_Pawn, RV_TraceParams);
+	
 	if (RV_Hit.bBlockingHit)
 	{
 		// TODO
 		// Damage
 		// Decals
+		UE_LOG(LogTemp, Warning, TEXT("Location is %s"), *RV_Hit.ImpactPoint.ToString());
+		OnFired.Broadcast(RV_Hit);
 	}
 
 	MagazineCapacity--;
