@@ -53,3 +53,8 @@ void AFDFirearm::Use(AActor* User)
 
 	Fire();
 }
+
+FText AFDFirearm::GetCountText()
+{
+	return FText::FromString(FString::FromInt(MagazineCapacity));
+}

@@ -42,6 +42,10 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = Firearm)
 	void Fire();
 
+	/** GetCountText */
+	UFUNCTION(BlueprintPure, Category = "Pickable Object")
+	virtual FText GetCountText() override;
+
 	/** OnFired */
 	UPROPERTY(BlueprintAssignable, Category = Firearm)
 	FOnFired OnFired;

@@ -82,3 +82,8 @@ FName AFDPickableObject::GetSocketName()
 {
 	return SocketName;
 }
+
+FText AFDPickableObject::GetCountText()
+{
+	return FText::FromString("");
+}

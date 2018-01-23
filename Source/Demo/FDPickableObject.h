@@ -60,6 +60,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Pickable Object")
 	FName GetSocketName();
 
+	/** GetCountText */
+	UFUNCTION(BlueprintPure, Category = "Pickable Object")
+	virtual FText GetCountText();
+
 protected:
 	/** BeginPlay */
 	virtual void BeginPlay() override;

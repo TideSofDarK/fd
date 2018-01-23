@@ -136,13 +136,12 @@ void AFDPlayerController::Interact()
 	{
 		AFDStaticInteractableObject* StaticInteractableObject = Cast<AFDStaticInteractableObject>(NearestInteractableObject);
 
+		bool ValidStaticInteractableObject = StaticInteractableObject != nullptr && StaticInteractableObject->IsValidLowLevel();
+
 		// Use item on some object
-		if (StaticInteractableObject != nullptr && StaticInteractableObject->IsValidLowLevel())
+		if (ValidStaticInteractableObject && StaticInteractableObject->CanInteractWith(ActiveInventoryItem))
 		{
-			if (StaticInteractableObject->CanInteractWith(ActiveInventoryItem))
-			{
-				StaticInteractableObject->InteractWithItem(ActiveInventoryItem, MyPawn);
-			}
+			StaticInteractableObject->InteractWithItem(ActiveInventoryItem, MyPawn);
 		}
 		else // Rollback to generic interact if item can't be used 
 		{
