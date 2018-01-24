@@ -127,17 +127,17 @@ void AFDPlayerController::Interact()
 
 	AFDPickableObject* PickableObject = Cast<AFDPickableObject>(NearestInteractableObject);
 
-	bool ValidNearestInteractableObject = NearestInteractableObject != nullptr && NearestInteractableObject->IsValidLowLevelFast();
-	bool ValidActiveInventoryItem		= ActiveInventoryItem != nullptr && ActiveInventoryItem->IsValidLowLevelFast();
+	bool bValidNearestInteractableObject = NearestInteractableObject != nullptr && NearestInteractableObject->IsValidLowLevelFast();
+	bool bValidActiveInventoryItem		= ActiveInventoryItem != nullptr && ActiveInventoryItem->IsValidLowLevelFast();
 
-	if (ValidNearestInteractableObject && ValidActiveInventoryItem)
+	if (bValidNearestInteractableObject && bValidActiveInventoryItem)
 	{
 		AFDStaticInteractableObject* StaticInteractableObject = Cast<AFDStaticInteractableObject>(NearestInteractableObject);
 
-		bool ValidStaticInteractableObject = StaticInteractableObject != nullptr && StaticInteractableObject->IsValidLowLevel();
+		bool bValidStaticInteractableObject = StaticInteractableObject != nullptr && StaticInteractableObject->IsValidLowLevel();
 
 		// Use item on some object
-		if (ValidStaticInteractableObject && StaticInteractableObject->CanInteractWith(ActiveInventoryItem))
+		if (bValidStaticInteractableObject && StaticInteractableObject->CanInteractWith(ActiveInventoryItem))
 		{
 			StaticInteractableObject->InteractWithItem(ActiveInventoryItem, MyPawn);
 		}
@@ -146,14 +146,14 @@ void AFDPlayerController::Interact()
 			NearestInteractableObject->Interact(MyPawn);
 		}
 	}
-	else if (ValidNearestInteractableObject)
+	else if (bValidNearestInteractableObject)
 	{
 		NearestInteractableObject->Interact(MyPawn);
 	}
-	else if (ValidActiveInventoryItem)
+	else if (bValidActiveInventoryItem)
 	{
 		// You can use weapons only when strafing
-		if (bStrafe || !ActiveInventoryItem->IsA<AFDFirearm>())
+		if (bStrafe || !ActiveInventoryItem->IsA<AFDFirearm>() && ActiveInventoryItem->CanBeUsedOnItsOwn())
 		{
 			ActiveInventoryItem->Use(MyPawn);
 		}
@@ -211,7 +211,7 @@ void AFDPlayerController::UpdateNearestInteractableObject()
 
 	TArray<AActor*> Actors;
 	CapsuleComponent->GetOverlappingActors(Actors, TSubclassOf<AFDGameplayObject>());
-
+	
 	for (int32 Index = Actors.Num() - 1; Index != -1; --Index)
 	{
 		AFDGameplayObject* Actor = Cast<AFDGameplayObject>(Actors[Index]);

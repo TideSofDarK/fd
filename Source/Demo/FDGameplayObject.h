@@ -9,6 +9,15 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractDelegate, class AActor*, OtherActor);
 
+UENUM(BlueprintType)
+enum class EGameplayObjectState : uint8
+{
+	VE_DisabledVisible UMETA(DisplayName = "Disabled and Visible"),
+	VE_EnabledVisible UMETA(DisplayName = "Enabled and Visible"),
+	VE_DisabledHidden UMETA(DisplayName = "Disabled and Hidden"),
+	VE_EnabledHidden UMETA(DisplayName = "Enabled and Hidden") // Probably useless
+};
+
 UCLASS()
 class DEMO_API AFDGameplayObject : public AActor
 {
@@ -27,9 +36,9 @@ public:
 	/** GetBoxComponent **/
 	FORCEINLINE class UBoxComponent* GetBoxComponent() { return BoxComponent; }
 
-	/** SetHidden **/
+	/** SetGameplayObjectState **/
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
-	virtual void SetHidden(bool Hidden);
+	virtual void SetGameplayObjectState(EGameplayObjectState NewGameplayObjectState);
 
 	/** Interact */
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
@@ -55,13 +64,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* BoxComponent;
 
-	/** StaticMeshOverride */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	class UStaticMesh* StaticMeshOverride;
+	/** bBypassNearestObjectDetection */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Object")
+	bool bBypassNearestObjectDetection;
 
-	/** BypassNearestObjectDetection */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	bool BypassNearestObjectDetection;
+	/** GameplayObjectState */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Object")
+	EGameplayObjectState GameplayObjectState;
 
 	/** OnInteract */
 	UPROPERTY(BlueprintAssignable, Category = "Gameplay Object")

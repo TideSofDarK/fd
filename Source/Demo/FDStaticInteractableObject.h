@@ -18,7 +18,7 @@ class DEMO_API AFDStaticInteractableObject : public AFDGameplayObject
 	GENERATED_BODY()
 	
 public:
-	// Called every frame
+	/** Tick */
 	virtual void Tick(float DeltaTime) override;
 
 	/** InteractWithItem */

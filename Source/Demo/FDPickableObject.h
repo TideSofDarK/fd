@@ -32,10 +32,6 @@ public:
 	// Sets default values for this actor's properties
 	AFDPickableObject();
 
-	/** SetHidden **/
-	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
-	virtual void SetHidden(bool Hidden) override;
-
 	/** Interact */
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
 	virtual void Interact(AActor* OtherActor) override;
@@ -51,6 +47,10 @@ public:
 	/** SetHolder */
 	UFUNCTION(BlueprintCallable, Category = "Pickable Object")
 	void SetHolder(AFDCharacter* NewOwner);
+
+	/** CanBeUsedOnItsOwn */
+	UFUNCTION(BlueprintPure, Category = "Pickable Object")
+	bool CanBeUsedOnItsOwn();
 
 	/** GetAttachWhenActive */
 	UFUNCTION(BlueprintPure, Category = "Pickable Object")
@@ -72,13 +72,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pickable Object")
 	EObjectSize ObjectSize;
 
+	/** bCanBeUsedOnItsOwn */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pickable Object")
+	bool bCanBeUsedOnItsOwn;
+
 	/** DestroyAfterUse */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickable Object")
-	bool DestroyAfterUse;
+	bool bDestroyAfterUse;
 
 	/** AttachWhenActive */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pickable Object")
-	bool AttachWhenActive;
+	bool bAttachWhenActive;
 
 	/** SocketName */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Pickable Object")

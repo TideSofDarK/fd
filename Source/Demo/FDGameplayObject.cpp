@@ -19,21 +19,21 @@ AFDGameplayObject::AFDGameplayObject()
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	BoxComponent->SetupAttachment(RootComponent);
 
-	if (StaticMeshOverride) {
-		StaticMeshComponent->SetStaticMesh(StaticMeshOverride);
-	}
-
-	BypassNearestObjectDetection = false;
+	bBypassNearestObjectDetection = false;
+	GameplayObjectState = EGameplayObjectState::VE_EnabledVisible;
 }
 
-void AFDGameplayObject::SetHidden(bool Hidden)
+void AFDGameplayObject::SetGameplayObjectState(EGameplayObjectState NewGameplayObjectState)
 {
-	ECollisionEnabled::Type collision = Hidden ? ECollisionEnabled::NoCollision : ECollisionEnabled::QueryAndPhysics;
+	bool bEnabled = NewGameplayObjectState == EGameplayObjectState::VE_EnabledVisible ||
+					NewGameplayObjectState == EGameplayObjectState::VE_EnabledHidden;
 
-	SetActorTickEnabled(!Hidden);
+	bool bVisible = NewGameplayObjectState == EGameplayObjectState::VE_EnabledVisible ||
+					NewGameplayObjectState == EGameplayObjectState::VE_DisabledVisible;
 
-	StaticMeshComponent->SetVisibility(!Hidden);
-	StaticMeshComponent->SetCollisionEnabled(collision);
+	SetActorTickEnabled(bEnabled);
+	SetActorEnableCollision(bEnabled);
+	SetActorHiddenInGame(!bVisible);
 }
 
 // Called when the game starts or when spawned
@@ -57,5 +57,5 @@ void AFDGameplayObject::Interact(AActor* OtherActor)
 
 bool AFDGameplayObject::GetBypassNearestObjectDetection()
 {
-	return BypassNearestObjectDetection;
+	return bBypassNearestObjectDetection;
 }

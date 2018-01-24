@@ -18,7 +18,7 @@ int UFDInventoryComponent::LoopInventory()
 	// Hide previously attached item
 	if (Items.IsValidIndex(ActiveInventoryItemIndex) && Items[ActiveInventoryItemIndex]->GetAttachWhenActive())
 	{
-		Items[ActiveInventoryItemIndex]->SetHidden(true);
+		Items[ActiveInventoryItemIndex]->SetGameplayObjectState(EGameplayObjectState::VE_DisabledHidden);
 	}
 
 	if (Items.Num() < ActiveInventoryItemIndex - 1)
@@ -48,7 +48,7 @@ int UFDInventoryComponent::LoopInventory()
 	// Attach and show if need
 	if (Items[ActiveInventoryItemIndex]->GetAttachWhenActive())
 	{
-		Items[ActiveInventoryItemIndex]->SetHidden(false);
+		Items[ActiveInventoryItemIndex]->SetGameplayObjectState(EGameplayObjectState::VE_DisabledVisible);
 		Items[ActiveInventoryItemIndex]->AttachToComponent(GetOwner()->FindComponentByClass<USceneComponent>(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, Items[ActiveInventoryItemIndex]->GetSocketName());
 	}
 

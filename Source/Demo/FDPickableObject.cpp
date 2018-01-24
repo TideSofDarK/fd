@@ -10,21 +10,14 @@ AFDPickableObject::AFDPickableObject()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	bCanBeUsedOnItsOwn = false;
 }
 
 void AFDPickableObject::BeginPlay()
 {
 	Super::BeginPlay();
 
-}
-
-void AFDPickableObject::SetHidden(bool Hidden)
-{
-	Super::SetHidden(Hidden);
-
-	ECollisionEnabled::Type collision = Hidden ? ECollisionEnabled::NoCollision : ECollisionEnabled::QueryAndPhysics;
-
-	BoxComponent->SetCollisionEnabled(collision);
 }
 
 void AFDPickableObject::Interact(AActor* OtherActor)
@@ -35,8 +28,8 @@ void AFDPickableObject::Interact(AActor* OtherActor)
 
 	if (Inventory)
 	{
-		BypassNearestObjectDetection = true;
-		SetHidden(true);
+		bBypassNearestObjectDetection = true;
+		SetGameplayObjectState(EGameplayObjectState::VE_DisabledHidden);
 
 		if (OtherActor->IsA<AFDCharacter>())
 		{
@@ -55,7 +48,7 @@ void AFDPickableObject::Use(AActor* User)
 
 	if (Inventory)
 	{
-		if (DestroyAfterUse)
+		if (bDestroyAfterUse)
 		{
 			Inventory->RemoveItem(this);
 			Destroy();
@@ -73,9 +66,14 @@ void AFDPickableObject::SetHolder(AFDCharacter* NewHolder)
 	Holder = NewHolder;
 }
 
+bool AFDPickableObject::CanBeUsedOnItsOwn()
+{
+	return bCanBeUsedOnItsOwn;
+}
+
 bool AFDPickableObject::GetAttachWhenActive()
 {
-	return AttachWhenActive;
+	return bAttachWhenActive;
 }
 
 FName AFDPickableObject::GetSocketName()

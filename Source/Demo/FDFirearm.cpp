@@ -11,6 +11,8 @@ AFDFirearm::AFDFirearm()
 
 	MagazineCapacity = 10;
 	Damage = 10;
+
+	bCanBeUsedOnItsOwn = true;
 }
 
 void AFDFirearm::Fire()
@@ -43,7 +45,7 @@ void AFDFirearm::Fire()
 
 	if (MagazineCapacity == 1)
 	{
-		DestroyAfterUse = true;
+		bDestroyAfterUse = true;
 	}
 }
 
