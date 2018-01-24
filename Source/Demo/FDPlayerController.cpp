@@ -1,5 +1,3 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
 #include "FDPlayerController.h"
 #include "Components/CapsuleComponent.h"
 #include "AI/Navigation/NavigationSystem.h"
@@ -9,7 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "FDInventoryComponent.h"
 #include "FDPlayerCharacter.h"
-#include "FDPickableObject.h"
+#include "FDFirearm.h"
 #include "FDStaticInteractableObject.h"
 
 AFDPlayerController::AFDPlayerController()
@@ -154,7 +152,11 @@ void AFDPlayerController::Interact()
 	}
 	else if (ValidActiveInventoryItem)
 	{
-		ActiveInventoryItem->Use(MyPawn);
+		// You can use weapons only when strafing
+		if (bStrafe || !ActiveInventoryItem->IsA<AFDFirearm>())
+		{
+			ActiveInventoryItem->Use(MyPawn);
+		}
 	}
 
 	UpdateNearestInteractableObject();
