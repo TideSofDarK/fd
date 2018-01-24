@@ -30,4 +30,13 @@ void AFDTerminal::Interact(AActor* OtherActor)
 {
 	Super::Interact(OtherActor);
 
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	PlayerController->DisableInput(PlayerController);
+
+	PlayerController->SetViewTargetWithBlend(
+		this,
+		0.5,
+		EViewTargetBlendFunction::VTBlend_Linear,
+		1.0,
+		true);
 }
