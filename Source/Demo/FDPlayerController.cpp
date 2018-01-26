@@ -13,7 +13,8 @@
 AFDPlayerController::AFDPlayerController()
 {
 	bShowMouseCursor = true;
-	DefaultMouseCursor = EMouseCursor::Crosshairs;
+	bEnableClickEvents = true;
+	DefaultMouseCursor = EMouseCursor::GrabHand;
 }
 
 void AFDPlayerController::PlayerTick(float DeltaTime)

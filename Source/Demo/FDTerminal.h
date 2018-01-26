@@ -34,6 +34,12 @@ protected:
 	/** BeginPlay */
 	virtual void BeginPlay() override;
 
+	/** ZoomIn */
+	virtual void ZoomIn();
+	
+	/** ZoomOut */
+	virtual void ZoomOut();
+
 private:
 	/** CameraComponent */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))

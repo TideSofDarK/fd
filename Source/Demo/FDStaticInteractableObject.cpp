@@ -1,5 +1,11 @@
 #include "FDStaticInteractableObject.h"
 
+AFDStaticInteractableObject::AFDStaticInteractableObject()
+{
+	InputComponent = CreateDefaultSubobject<UInputComponent>(TEXT("ObjectInputComponent"));
+	InputComponent->bBlockInput = bBlockInput;
+}
+
 void AFDStaticInteractableObject::BeginPlay()
 {
 	Super::BeginPlay();

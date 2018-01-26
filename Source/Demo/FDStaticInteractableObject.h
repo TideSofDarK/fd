@@ -18,6 +18,9 @@ class DEMO_API AFDStaticInteractableObject : public AFDGameplayObject
 	GENERATED_BODY()
 	
 public:
+	/** AFDStaticInteractableObject */
+	AFDStaticInteractableObject();
+
 	/** Tick */
 	virtual void Tick(float DeltaTime) override;
 
