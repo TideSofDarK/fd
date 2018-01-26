@@ -10,34 +10,6 @@
 #include "FDHexagonGrid2DCellComponent.h"
 #include "FDHexagonGrid2D.generated.h"
 
-USTRUCT()
-struct FCellsArray
-{
-	GENERATED_BODY()
-
-	TArray<UFDHexagonGrid2DCellComponent*> Cells;
-
-public:
-
-	/** IsValidIndex */
-	bool IsValidIndex(uint32 Index)
-	{
-		return Cells.IsValidIndex(Index);
-	}
-
-	/** operator[] */
-	UFDHexagonGrid2DCellComponent* operator[] (int32 i)
-	{
-		return Cells[i];
-	}
-
-	/** Ad */
-	void Add(UFDHexagonGrid2DCellComponent* Cell)
-	{
-		Cells.Add(Cell);
-	}
-};
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCellClickedDelegate, UFDHexagonGrid2DCellComponent*, HexagonGrid2DCellComponent);
 
 UCLASS()
@@ -46,11 +18,19 @@ class DEMO_API AFDHexagonGrid2D : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+	/** AFDHexagonGrid2D */
 	AFDHexagonGrid2D();
 
-	// Called every frame
+	/** OnConstruction */
+	virtual void OnConstruction(const FTransform & Transform) override;
+
+	/** Tick */
 	virtual void Tick(float DeltaTime) override;
+
+#if WITH_EDITOR
+	/** PostEditChangeProperty */
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 protected:
 	// Called when the game starts or when spawned
@@ -68,6 +48,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Hexagon Grid 2D")
 	UPaperSprite * CellSprite;
 
+	/** UpdateGrid */
+	UFUNCTION(BlueprintCallable, Category = "Hexagon Grid 2D")
+	void UpdateGrid();
+
 	/** IsValidCoords */
 	UFUNCTION(BlueprintCallable, Category = "Hexagon Grid 2D")
 	bool IsValidCoords(FIntVector Coords);
@@ -80,14 +64,15 @@ protected:
 	UFUNCTION(BlueprintPure, Category = "Hexagon Grid 2D")
 	TArray<UFDHexagonGrid2DCellComponent*> GetAdjacentCells(FIntVector Coords);
 
+	/** GetCells */
+	UFUNCTION(BlueprintPure, Category = "Hexagon Grid 2D")
+	TArray<UFDHexagonGrid2DCellComponent*> GetCells();
+
 	/** OnCellClickedDelegate */
 	UPROPERTY(BlueprintAssignable, Category = "Hexagon Grid 2D")
 	FOnCellClickedDelegate OnCellClickedDelegate;
 
 private:
-	/** Cells */
-	TArray<FCellsArray> Cells;
-
 	/** CellClicked */
 	UFUNCTION()
 	void CellClicked(UPrimitiveComponent* PrimitiveComponent, FKey Key);
@@ -95,4 +80,8 @@ private:
 	/** SceneComponent */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* SceneComponent;
+
+	/** CellsRootSceneComponent */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* CellsRootSceneComponent;
 };

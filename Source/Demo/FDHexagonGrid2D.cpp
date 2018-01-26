@@ -9,6 +9,86 @@ AFDHexagonGrid2D::AFDHexagonGrid2D()
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
+
+	CellsRootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("CellsRootSceneComponent"));
+	CellsRootSceneComponent->SetupAttachment(RootComponent);
+
+	if (!CellSprite->IsValidLowLevel())
+	{
+		const ConstructorHelpers::FObjectFinder<UPaperSprite> CellSpriteFinder(TEXT("/Game/Sprites/HexagonCell"));
+		CellSprite = CellSpriteFinder.Object;
+	}
+
+	//for (auto X = 0; X < GridWidth; X++)
+	//{
+	//	Cells.Add(FCellsArray());
+	//	for (auto Y = 0; Y < GridHeight; ++Y)
+	//	{
+	//		float HalfWidth = SourceSize.X / 2;
+	//		float YOffset = (sqrt(3) / 2 * SourceSize.X) * Y;
+	//		if (X % 2 != 0)
+	//		{
+	//			YOffset += (sqrt(3) / 2 * HalfWidth);
+	//		}
+
+	//		//UFDHexagonGrid2DCellComponent* Cell = NewObject<UFDHexagonGrid2DCellComponent>(this, *FString("CellSpriteComponent" + FString::FromInt(X) + FString::FromInt(Y)));
+	//		UFDHexagonGrid2DCellComponent* Cell = CreateDefaultSubobject<UFDHexagonGrid2DCellComponent>(*FString("CellSpriteComponent" + FString::FromInt(X) + FString::FromInt(Y)));
+	//		Cell->SetupAttachment(RootComponent);
+	//		Cell->SetSprite(CellSprite);
+	//		Cell->OnClicked.AddDynamic(this, &AFDHexagonGrid2D::CellClicked);
+	//		Cell->SetRelativeLocation(FVector4(HalfWidth * 3 / 2 * X, 0, YOffset));
+	//		Cell->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	//		Cell->SetCoords(FIntVector(X, Y, 0));
+
+	//		Cells[X].Add(Cell);
+	//	}
+	//}
+}
+
+void AFDHexagonGrid2D::OnConstruction(const FTransform & Transform)
+{
+	Super::OnConstruction(Transform);
+
+	UpdateGrid();
+}
+
+void AFDHexagonGrid2D::UpdateGrid()
+{
+	TArray<UFDHexagonGrid2DCellComponent*> Cells = GetCells();
+
+	FVector2D SourceSize = CellSprite->GetSourceSize();
+
+	int X = 0;
+	int Y = 0;
+
+	for (UFDHexagonGrid2DCellComponent* Cell : Cells)
+	{
+		float HalfWidth = SourceSize.X / 2;
+		float YOffset = (sqrt(3) / 2 * SourceSize.X) * Y;
+		if (X % 2 != 0)
+		{
+			YOffset += (sqrt(3) / 2 * HalfWidth);
+		}
+
+		Cell->SetSprite(CellSprite);
+		Cell->SetRelativeLocation(FVector4(HalfWidth * 3 / 2 * X, 0, YOffset));
+		Cell->SetCoords(FIntVector(X, Y, 0));
+
+		X++;
+		if (X == GridWidth && Y == GridHeight)
+		{
+			break;
+		}
+		if (X == GridWidth)
+		{
+			X = 0;
+			Y++;
+		}
+		if (Y == GridHeight)
+		{
+			Y = 0;
+		}
+	}
 }
 
 // Called when the game starts or when spawned
@@ -16,39 +96,15 @@ void AFDHexagonGrid2D::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!CellSprite->IsValidLowLevel())
+	//UpdateGrid();
+	TArray<UFDHexagonGrid2DCellComponent*> Cells = GetCells();
+	for (UFDHexagonGrid2DCellComponent* Cell : Cells)
 	{
-		return;
+		Cell->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+		Cell->OnClicked.AddDynamic(this, &AFDHexagonGrid2D::CellClicked);
 	}
 
-	FVector2D SourceSize = CellSprite->GetSourceSize();
-
-	for (auto X = 0; X < GridWidth; X++)
-	{
-		Cells.Add(FCellsArray());
-		for (auto Y = 0; Y < GridHeight; ++Y)
-		{
-			float HalfWidth = SourceSize.X / 2;
-			float YOffset = (sqrt(3) / 2 * SourceSize.X) * Y;
-			if (X % 2 != 0)
-			{
-				YOffset += (sqrt(3) / 2 * HalfWidth);
-			}
-
-			UFDHexagonGrid2DCellComponent* Cell = NewObject<UFDHexagonGrid2DCellComponent>(this, *FString("CellSpriteComponent" + FString::FromInt(X) + FString::FromInt(Y)));
-			Cell->RegisterComponent();
-			Cell->AttachToComponent(RootComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-			Cell->SetupAttachment(RootComponent);
-			Cell->SetSprite(CellSprite);
-			Cell->OnClicked.AddDynamic(this, &AFDHexagonGrid2D::CellClicked);
-			Cell->SetRelativeLocation(FVector4(HalfWidth * 3 / 2 * X, 0, YOffset));
-			Cell->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-			Cell->SetCoords(FIntVector(X, Y, 0));
-			EnableInput(GetWorld()->GetFirstPlayerController());
-
-			Cells[X].Add(Cell);
-		}
-	}
+	EnableInput(GetWorld()->GetFirstPlayerController());
 }
 
 // Called every frame
@@ -58,34 +114,49 @@ void AFDHexagonGrid2D::Tick(float DeltaTime)
 
 }
 
+#if WITH_EDITOR
+void AFDHexagonGrid2D::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+}
+#endif
+
 void AFDHexagonGrid2D::CellClicked(UPrimitiveComponent* PrimitiveComponent, FKey Key)
 {
 	UFDHexagonGrid2DCellComponent* Cell = Cast<UFDHexagonGrid2DCellComponent>(PrimitiveComponent);
 	if (Cell->IsValidLowLevelFast())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, Cell->GetCoords().ToString());
-	
 		OnCellClickedDelegate.Broadcast(Cell);
 	}
 }
 
 bool AFDHexagonGrid2D::IsValidCoords(FIntVector Coords)
 {
-	return (Cells.IsValidIndex(Coords.X) && Cells[Coords.X].IsValidIndex(Coords.Y));
+	bool Contains = GetCells().ContainsByPredicate([&](const UFDHexagonGrid2DCellComponent* InItem)
+	{
+		return InItem->GetCoords() == Coords;
+	});
+
+	return Contains;
 }
 
 UFDHexagonGrid2DCellComponent* AFDHexagonGrid2D::GetCell(FIntVector Coords)
 {
-	return Cells[Coords.X][Coords.Y];
+	UFDHexagonGrid2DCellComponent* Cell = *GetCells().FindByPredicate([&](const UFDHexagonGrid2DCellComponent* InItem)
+	{
+		return InItem->GetCoords() == Coords;
+	});
+
+	return Cell;
 }
 
 TArray<UFDHexagonGrid2DCellComponent*> AFDHexagonGrid2D::GetAdjacentCells(FIntVector Coords)
 {
 	TArray<UFDHexagonGrid2DCellComponent*> AdjacentCells;
 
-	UFDHexagonGrid2DCellComponent* Cell;
+	UFDHexagonGrid2DCellComponent* Cell = GetCell(Coords);
 
-	if (IsValidCoords(Coords) && (Cell = GetCell(Coords))->IsValidLowLevelFast())
+	if (IsValidCoords(Coords) && Cell->IsValidLowLevelFast())
 	{
 		AdjacentCells.Add(Cell);
 	}
@@ -146,4 +217,22 @@ TArray<UFDHexagonGrid2DCellComponent*> AFDHexagonGrid2D::GetAdjacentCells(FIntVe
 	}
 
 	return AdjacentCells;
+}
+
+TArray<UFDHexagonGrid2DCellComponent*> AFDHexagonGrid2D::GetCells()
+{
+	TArray<USceneComponent*> Children;
+	CellsRootSceneComponent->GetChildrenComponents(true, Children);
+
+	TArray<UFDHexagonGrid2DCellComponent*> AllCells;
+	
+	for (USceneComponent* SceneComponent : Children)
+	{
+		if (SceneComponent->IsA<UFDHexagonGrid2DCellComponent>())
+		{
+			AllCells.Add(Cast<UFDHexagonGrid2DCellComponent>(SceneComponent));
+		}
+	}
+
+	return AllCells;
 }
