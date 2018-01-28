@@ -13,12 +13,6 @@ AFDHexagonGrid2D::AFDHexagonGrid2D()
 	CellsRootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("CellsRootSceneComponent"));
 	CellsRootSceneComponent->SetupAttachment(RootComponent);
 
-	if (!CellSprite->IsValidLowLevel())
-	{
-		const ConstructorHelpers::FObjectFinder<UPaperSprite> CellSpriteFinder(TEXT("/Game/Sprites/HexagonCell"));
-		CellSprite = CellSpriteFinder.Object;
-	}
-
 	//for (auto X = 0; X < GridWidth; X++)
 	//{
 	//	Cells.Add(FCellsArray());
@@ -56,7 +50,16 @@ void AFDHexagonGrid2D::UpdateGrid()
 {
 	TArray<UFDHexagonGrid2DCellComponent*> Cells = GetCells();
 
-	FVector2D SourceSize = CellSprite->GetSourceSize();
+	FVector2D SourceSize;
+
+	if (Cells.Num() > 0)
+	{
+		SourceSize = Cells[0]->GetSprite()->GetSourceSize();
+	}
+	else
+	{
+		return;
+	}
 
 	int X = 0;
 	int Y = 0;
@@ -70,9 +73,9 @@ void AFDHexagonGrid2D::UpdateGrid()
 			YOffset += (sqrt(3) / 2 * HalfWidth);
 		}
 
-		Cell->SetSprite(CellSprite);
-		Cell->SetRelativeLocation(FVector4(HalfWidth * 3 / 2 * X, 0, YOffset));
 		Cell->SetCoords(FIntVector(X, Y, 0));
+		Cell->SetCellType(Cell->GetCellType());
+		Cell->SetRelativeLocation(FVector4(HalfWidth * 3 / 2 * X, 0, YOffset));
 
 		X++;
 		if (X == GridWidth && Y == GridHeight)

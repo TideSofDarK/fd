@@ -44,10 +44,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Hexagon Grid 2D")
 	int GridHeight;
 
-	/** CellSprite */
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Hexagon Grid 2D")
-	UPaperSprite * CellSprite;
-
 	/** UpdateGrid */
 	UFUNCTION(BlueprintCallable, Category = "Hexagon Grid 2D")
 	void UpdateGrid();
