@@ -1,6 +1,7 @@
 #include "FDTerminal.h"
 #include "Camera/CameraComponent.h"
 #include "UObject/ConstructorHelpers.h"
+#include "FDIngameHUD.h"
 
 AFDTerminal::AFDTerminal()
 {
@@ -44,6 +45,9 @@ void AFDTerminal::ZoomIn()
 	APawn* Pawn = PlayerController->GetPawn();
 	PlayerController->DisableInput(PlayerController);
 
+	AFDIngameHUD* HUD = Cast<AFDIngameHUD>(PlayerController->GetHUD());
+	HUD->SlideOutHUD();
+
 	EnableInput(PlayerController);
 
 	PlayerController->SetViewTargetWithBlend(
@@ -59,6 +63,9 @@ void AFDTerminal::ZoomOut()
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	APawn* Pawn = PlayerController->GetPawn();
 	PlayerController->EnableInput(PlayerController);
+
+	AFDIngameHUD* HUD = Cast<AFDIngameHUD>(PlayerController->GetHUD());
+	HUD->SlideOutHUD();
 
 	DisableInput(PlayerController);
 
