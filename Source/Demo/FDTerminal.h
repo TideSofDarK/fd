@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FDStaticInteractableObject.h"
+#include "FDStationaryObject.h"
 #include "FDTerminal.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEMO_API AFDTerminal : public AFDStaticInteractableObject
+class DEMO_API AFDTerminal : public AFDStationaryObject
 {
 	GENERATED_BODY()
 	
@@ -26,9 +26,8 @@ public:
 	/** GetCameraComponent **/
 	FORCEINLINE class UStaticMeshComponent* GetScreenMeshComponent() const { return ScreenMeshComponent; }
 
-	/** Interact */
-	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
-	virtual void Interact(AActor* OtherActor) override;
+	/** Interact_Implementation */
+	virtual void Interact_Implementation(AActor* OtherActor) override;
 
 protected:
 	/** BeginPlay */

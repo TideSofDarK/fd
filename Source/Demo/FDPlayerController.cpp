@@ -8,7 +8,7 @@
 #include "FDInventoryComponent.h"
 #include "FDPlayerCharacter.h"
 #include "FDFirearm.h"
-#include "FDStaticInteractableObject.h"
+#include "FDStationaryObject.h"
 
 AFDPlayerController::AFDPlayerController()
 {
@@ -133,23 +133,26 @@ void AFDPlayerController::Interact()
 
 	if (bValidNearestInteractableObject && bValidActiveInventoryItem)
 	{
-		AFDStaticInteractableObject* StaticInteractableObject = Cast<AFDStaticInteractableObject>(NearestInteractableObject);
+		AFDStationaryObject* StaticInteractableObject = Cast<AFDStationaryObject>(NearestInteractableObject);
 
 		bool bValidStaticInteractableObject = StaticInteractableObject != nullptr && StaticInteractableObject->IsValidLowLevel();
 
+		//IFDInteractable* InteractableInterface = Cast<IFDInteractable>(StaticInteractableObject);
+		//InteractableInterface->Execute_CanInteractWith(Cast<UObject>(InteractableInterface), ActiveInventoryItem)
+	
 		// Use item on some object
-		if (bValidStaticInteractableObject && StaticInteractableObject->CanInteractWith(ActiveInventoryItem))
+		if (bValidStaticInteractableObject && IFDInteractableWithItem::Execute_CanInteractWith(StaticInteractableObject, ActiveInventoryItem))
 		{
-			StaticInteractableObject->InteractWithItem(ActiveInventoryItem, MyPawn);
+			IFDInteractableWithItem::Execute_InteractWithItem(StaticInteractableObject, ActiveInventoryItem, MyPawn);
 		}
 		else // Rollback to generic interact if item can't be used 
 		{
-			NearestInteractableObject->Interact(MyPawn);
+			IFDInteractable::Execute_Interact(NearestInteractableObject, MyPawn);
 		}
 	}
 	else if (bValidNearestInteractableObject)
 	{
-		NearestInteractableObject->Interact(MyPawn);
+		IFDInteractable::Execute_Interact(NearestInteractableObject, MyPawn);
 	}
 	else if (bValidActiveInventoryItem)
 	{

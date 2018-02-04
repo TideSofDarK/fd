@@ -20,9 +20,9 @@ void AFDPickableObject::BeginPlay()
 
 }
 
-void AFDPickableObject::Interact(AActor* OtherActor)
+void AFDPickableObject::Interact_Implementation(AActor* OtherActor)
 {
-	Super::Interact(OtherActor);
+	Super::Interact_Implementation(OtherActor);
 
 	UFDInventoryComponent* Inventory = OtherActor->FindComponentByClass<UFDInventoryComponent>();
 

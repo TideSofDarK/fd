@@ -15,9 +15,11 @@ AFDGameplayObject::AFDGameplayObject()
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	StaticMeshComponent->SetupAttachment(RootComponent);
+	StaticMeshComponent->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
 
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	BoxComponent->SetupAttachment(RootComponent);
+	BoxComponent->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
 
 	bBypassNearestObjectDetection = false;
 	GameplayObjectState = EGameplayObjectState::VE_EnabledVisible;
@@ -50,7 +52,7 @@ void AFDGameplayObject::Tick(float DeltaTime)
 
 }
 
-void AFDGameplayObject::Interact(AActor* OtherActor)
+void AFDGameplayObject::Interact_Implementation(AActor* OtherActor)
 {
 	OnInteractDelegate.Broadcast(OtherActor);
 }

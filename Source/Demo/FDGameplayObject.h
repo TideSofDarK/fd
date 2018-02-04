@@ -5,9 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Delegates/DelegateCombinations.h"
+#include "FDInteractable.h"
 #include "FDGameplayObject.generated.h"
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractDelegate, class AActor*, OtherActor);
 
 UENUM(BlueprintType)
 enum class EGameplayObjectState : uint8
@@ -19,7 +18,7 @@ enum class EGameplayObjectState : uint8
 };
 
 UCLASS()
-class DEMO_API AFDGameplayObject : public AActor
+class DEMO_API AFDGameplayObject : public AActor, public IFDInteractable
 {
 	GENERATED_BODY()
 	
@@ -40,9 +39,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
 	virtual void SetGameplayObjectState(EGameplayObjectState NewGameplayObjectState);
 
-	/** Interact */
-	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
-	virtual void Interact(AActor* OtherActor);
+	/** Interact_Implementation */
+	virtual void Interact_Implementation(AActor* OtherActor) override;
 
 	/** GetBypassNearestObjectDetection */
 	UFUNCTION(BlueprintPure, Category = "Gameplay Object")
@@ -72,7 +70,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay Object")
 	EGameplayObjectState GameplayObjectState;
 
-	/** OnInteract */
+	/** OnInteractDelegate */
 	UPROPERTY(BlueprintAssignable, Category = "Gameplay Object")
 	FOnInteractDelegate OnInteractDelegate;
 };

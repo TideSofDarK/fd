@@ -29,12 +29,11 @@ private:
 	AFDCharacter* Holder;
 
 public:
-	// Sets default values for this actor's properties
+	/** AFDPickableObject */
 	AFDPickableObject();
 
-	/** Interact */
-	UFUNCTION(BlueprintCallable, Category = "Gameplay Object")
-	virtual void Interact(AActor* OtherActor) override;
+	/** Interact_Implementation */
+	virtual void Interact_Implementation(AActor* OtherActor) override;
 
 	/** Use */
 	UFUNCTION(BlueprintCallable, Category = "Pickable Object")

@@ -18,7 +18,7 @@ void AFDTerminal::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, "NO BINDING INPUT");
+	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, "NO BINDING INPUT");
 	if (InputComponent->IsValidLowLevel())
 	{
 		InputComponent->BindAction("Escape", IE_Pressed, this, &AFDTerminal::ZoomOut);
@@ -31,9 +31,9 @@ void AFDTerminal::Tick(float DeltaTime)
 
 }
 
-void AFDTerminal::Interact(AActor* OtherActor)
+void AFDTerminal::Interact_Implementation(AActor* OtherActor)
 {
-	Super::Interact(OtherActor);
+	Super::Interact_Implementation(OtherActor);
 
 	ZoomIn();
 }
